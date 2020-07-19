@@ -1,44 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
-# set the version to install
-# go to --> https://github.com/lidarr/Lidarr/releases
-# to find the latest release, Lidar.develop.x.x.x.xxx.linux.tar.gz
-VERSION="0.5.0.583"
-# set the data location
-DATA_LOCATION="/app-data/lidarr"
+# Initialise defaults
+FILE_NAME=$(curl -s https://api.github.com/repos/lidarr/Lidarr/releases | jq -r '[[.[] | select(.draft != true) | select(.prerelease == true)][0] | .assets | .[] | select(.name | endswith(".linux.tar.gz")) | .name][0]')
+DOWNLOAD=$(curl -s https://api.github.com/repos/lidarr/Lidarr/releases | jq -r '[[.[] | select(.draft != true) | select(.prerelease == true)][0] | .assets | .[] | select(.name | endswith(".linux.tar.gz")) | .browser_download_url][0]')
+  
+iocage exec "${1}" fetch -o /usr/local/share "${DOWNLOAD}"
+"tar -xzvf /usr/local/share/${FILE_NAME} -C /usr/local/share"
+rm /usr/local/share/"${FILE_NAME}"
 
-# make sure "mono" points to the proper location
-ln -s /usr/local/bin/mono /usr/bin/mono
+"pw user add lidarr -c lidarr -u 353 -d /nonexistent -s /usr/bin/nologin"
+chown -R lidarr:lidarr /usr/local/share/Lidarr /config
 
-# get the "lidarr" package
-fetch https://github.com/lidarr/Lidarr/releases/download/v$VERSION/Lidarr.develop.$VERSION.linux.tar.gz -o /usr/local/share
-
-# unpack the package to the install location
-tar -xzvf /usr/local/share/Lidarr.develop.*.linux.tar.gz -C /usr/local/share
-
-# remove the package as it no longer needed
-rm /usr/local/share/Lidarr.*.tar.gz
-
-# create "lidarr" user
-pw user add lidarr -c lidarr -u 353 -d /nonexistent -s /usr/bin/nologin
-
-# create the data location
-mkdir -p $DATA_LOCATION
-
-# make "lidarr" the owner of the install and data locations
-chown -R lidarr:lidarr /usr/local/share $DATA_LOCATION
-
-# give write permission for plugin update
-chmod 755 $DATA_LOCATION
-
-# give execute permssion to the Daemon script
 chmod u+x /usr/local/etc/rc.d/lidarr
-
-# enable lidarr to start at boot
 sysrc "lidarr_enable=YES"
-
-# set the location for the data directory
-sysrc "lidarr_data_dir=$DATA_LOCATION"
-
-# start the lidarr service
-service lidarr start

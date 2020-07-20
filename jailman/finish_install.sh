@@ -2,7 +2,7 @@
 # This file contains the install script for lidarr
 
 #init jail
-initblueprint "$1"
+initplugin "$1"
 
 # Check if dataset for completed download and it parent dataset exist, create if they do not.
 createmount "$1" "${global_dataset_downloads}"
@@ -14,4 +14,4 @@ createmount "$1" "${global_dataset_media}"/music /mnt/music
 
 iocage exec "$1" service lidarr start
 
-exitblueprint "$1"
+exitplugin "$1"

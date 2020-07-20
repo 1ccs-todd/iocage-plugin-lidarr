@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Initialise defaults
 FILE_NAME=$(curl -s https://api.github.com/repos/lidarr/Lidarr/releases | jq -r '[[.[] | select(.draft != true) | select(.prerelease == true)][0] | .assets | .[] | select(.name | endswith(".linux.tar.gz")) | .name][0]')

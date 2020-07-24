@@ -9,7 +9,6 @@ tar -xzvf /usr/local/share/${FILE_NAME} -C /usr/local/share
 rm /usr/local/share/"${FILE_NAME}"
 
 pw user add lidarr -c lidarr -u 353 -d /nonexistent -s /usr/bin/nologin
-chown -R lidarr:lidarr /usr/local/share/Lidarr /config
 
 chmod u+x /usr/local/etc/rc.d/lidarr
 sysrc "lidarr_enable=YES"

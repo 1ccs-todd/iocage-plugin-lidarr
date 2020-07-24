@@ -12,7 +12,7 @@ createmount "$1" "${global_dataset_downloads}"/complete /mnt/fetched
 createmount "$1" "${global_dataset_media}"
 createmount "$1" "${global_dataset_media}"/music /mnt/music
 
-createmount "$1" chown -R lidarr:lidarr /usr/local/share/Lidarr /config
+iocage exec "$1" chown -R lidarr:lidarr /usr/local/share/Lidarr /config
 iocage exec "$1" service lidarr start
 
 exitplugin "$1"
